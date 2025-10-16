@@ -47,9 +47,9 @@ async function bootstrap() {
   const PORT = Number(process.env.PORT) || 3000;
   await app.listen(PORT, '0.0.0.0');
 
-  console.log(`✅ Serveur en cours d'exécution sur http://localhost:${PORT}`);
-  console.log(`📘 Swagger disponible sur http://localhost:${PORT}/api`);
-  console.log(`🖼️ Images accessibles sur http://localhost:${PORT}/uploads/<fileName>`);
+  console.log(`Serveur en cours d'exécution sur http://localhost:${PORT}`);
+  console.log(`Swagger disponible sur http://localhost:${PORT}/api`);
+  console.log(`Images accessibles sur http://localhost:${PORT}/uploads/<fileName>`);
 }
 
 bootstrap();

@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { User } from './user.entity'; // Assurez-vous que ce chemin est correct
 import { Role } from './Role.enum';
 
 export type TokenDocument = Token & Document;
