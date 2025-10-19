@@ -11,6 +11,8 @@ import { JwtStrategy } from './user/jwt-auth/jwt.strategy';
 import { CourseModuleModule } from './course-module/course-module.module';
 import { LessonModule } from './lesson/lesson.module';
 import { ResourcesModule } from './resources/resources.module';
+import { StorageModule } from './storage/storage.module';
+import { CategoryModule } from './category/category.module';
 
 
 @Module({
@@ -18,12 +20,14 @@ import { ResourcesModule } from './resources/resources.module';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    MongooseModule.forRoot('mongodb://127.0.0.1:27017/StageEte2025_2026'),
+    MongooseModule.forRoot('mongodb://admin:admin@127.0.0.1:27017/StageEte2025_2026?authSource=admin'),
     UserModule,
     AuthModule,
     CourseModuleModule,
     LessonModule,
     ResourcesModule,
+    StorageModule,
+    CategoryModule,
   ],
   providers: [AppService,JwtStrategy],
   controllers: [AppController, UserController,],

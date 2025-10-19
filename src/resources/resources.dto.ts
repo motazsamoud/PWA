@@ -13,7 +13,8 @@ export const CreateResourceSchema = z.object({
     .string()
     .min(1, { message: 'Label is required' })
     .max(255, { message: 'Label must be at most 255 characters' }),
-  resourceURI: z.string().min(1, { message: 'resourceURI is required' }),
+   resourceURI: z.string().min(1, { message: 'resourceURI is required' }).optional(),
+   filePath: z.string().min(1, { message: 'filePath is required' }).optional(),
 });
 export type CreateResourceType = z.infer<typeof CreateResourceSchema>;
 export class CreateResourceDto extends createZodDto(CreateResourceSchema) {}
@@ -40,6 +41,7 @@ export const QueryResourceSchema = z.object({
     .pipe(z.number().int().min(1))
     .optional()
     .default('20'),
+  sort: z.string().optional(),
 });
 export type QueryResourceType = z.infer<typeof QueryResourceSchema>;
 export class QueryResourceDto extends createZodDto(QueryResourceSchema) {}

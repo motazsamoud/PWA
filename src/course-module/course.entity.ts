@@ -1,7 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
 import { v4 as uuid } from 'uuid';
 import { jsonStringifyReplacer } from 'zod/v4/core/util';
+import { Category } from '../category/category.entity';
 
 export type CourseDocument = HydratedDocument<Course>;
 
@@ -13,6 +14,10 @@ export class Course {
 
   @Prop({ type: String, required: true, trim: true, maxlength: 255, unique: true, index: true })
   label: string;
+
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'Category', required: true, index: true })
+  categoryId: string;
+
 
   @Prop({ type: String, required: false })
   description?: string;

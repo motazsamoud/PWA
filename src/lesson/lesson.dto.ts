@@ -41,6 +41,7 @@ export const QueryLessonSchema = z.object({
     .optional()
     .default('false'),
   courseId: z.string().optional(), // pour filtrer par cours
+  sort: z.string().optional(),
 });
 
 export type QueryLessonType = z.infer<typeof QueryLessonSchema>;

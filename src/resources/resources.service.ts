@@ -7,6 +7,7 @@ import {
   UpdateResourceType,
   QueryResourceType,
 } from './resources.dto';
+import { parseSortString } from 'src/helpers';
 
 @Injectable()
 export class ResourceService {
@@ -23,7 +24,7 @@ export class ResourceService {
   }
 
   async findAll(query: QueryResourceType) {
-    const { page = 1 as any, limit = 20 as any, search, includeDeleted = 'false', lessonId } =
+    const { page = 1 as any, limit = 20 as any, search, includeDeleted = 'false', lessonId, sort } =
       query as any;
 
     const filter: FilterQuery<ResourceDocument> = {};
@@ -34,10 +35,12 @@ export class ResourceService {
       filter.$or = [{ label: rx }, { resourceURI: rx }];
     }
 
+    const sortOptions = parseSortString(sort);
+
     const [items, total] = await Promise.all([
       this.model
         .find(filter)
-        .sort({ createdAt: -1 })
+        .sort(sortOptions)
         .skip((page - 1) * limit)
         .limit(limit)
         .lean(),

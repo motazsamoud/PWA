@@ -17,8 +17,12 @@ export class Resource {
   @Prop({ type: String, required: true, trim: true, maxlength: 255 })
   label: string;
 
-  @Prop({ type: String, required: true }) // URL/URI ou du texte long
-  resourceURI: string;
+  @Prop({ type: String, required: false }) // URL/URI ou du texte long
+  resourceURI?: string;
+  
+  @Prop({ type: String, required: false }) // File Path
+  filePath?: string;
+  
 
   @Prop({ type: Date, default: null, index: true })
   deletedAt?: Date | null;

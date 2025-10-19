@@ -1,10 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { ResourceService } from './resources.service';
-import { CreateResourceDto, QueryResourceDto, UpdateResourceDto } from './resources.dto';
+import { CreateResourceDto, CreateResourceType, QueryResourceDto, UpdateResourceDto } from './resources.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { StorageService } from 'src/storage/storage.service';
 
 @Controller()
 export class ResourceController {
-  constructor(private readonly service: ResourceService) {}
+  constructor(private readonly service: ResourceService, private readonly storageService: StorageService) {}
 
   // Créer une resource sous une leçon
   @Post('lessons/:lessonId/resources')
@@ -49,5 +51,24 @@ export class ResourceController {
   async hard(@Param('id') id: string) {
     await this.service.hardDelete(id);
     return { success: true };
+  }
+
+  @Post('lessons/:lessonId/resources/new')
+  @UseInterceptors(FileInterceptor('file'))
+  async updateOrder(@UploadedFile() file, @Param('lessonId') lessonId_: string, @Body() {lessonId, label, resourceURI}: CreateResourceDto) {
+    if(!file && !resourceURI) {
+      return {status: 400, message: 'No file or resource URI provided' };
+    }
+    const content_: CreateResourceType = {label, lessonId}
+    if(file) {
+      const storedFilePath = await this.storageService.upload(file, `resources/${lessonId_}`);
+      content_.filePath = storedFilePath;
+    }
+
+    if(resourceURI) {
+      content_.resourceURI = resourceURI;
+    }
+    const newResources = await this.service.create(content_);
+    return {status: 200, message: 'Order updated successfully', data: newResources};
   }
 }

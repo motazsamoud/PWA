@@ -1,10 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Body, Injectable, NotFoundException, UploadedFile } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model } from 'mongoose';
 import { Lesson, LessonDocument } from './lesson.entity';
 import { CreateLessonType, UpdateLessonType, QueryLessonType } from './lesson.dto';
 import { CourseDocument, Course } from 'src/course-module/course.entity';
 import { CourseService } from 'src/course-module/course.service';
+import { parseSortString } from 'src/helpers';
 
 @Injectable()
 export class LessonService {
@@ -28,6 +29,7 @@ export class LessonService {
       search,
       includeDeleted = 'false',
       courseId,
+      sort,
     } = query as any;
 
     const filter: FilterQuery<LessonDocument> = {};
@@ -39,10 +41,12 @@ export class LessonService {
       filter.$or = [{ description: rx }, { textMarkdown: rx }];
     }
 
+    const sortOptions = parseSortString(sort);
+
     const [items, total] = await Promise.all([
       this.lessonModel
         .find(filter)
-        .sort({ createdAt: -1 })
+        .sort(sortOptions)
         .skip((page - 1) * limit)
         .limit(limit)
         .lean(),
@@ -85,5 +89,12 @@ export class LessonService {
   async hardDelete(_id: string): Promise<void> {
     const res = await this.lessonModel.deleteOne({ _id });
     if (res.deletedCount === 0) throw new NotFoundException(`Lesson ${_id} not found`);
+  }
+
+  async uploadFile(@Body() requestBody, @UploadedFile() videoFile): Promise<{status: number, message: string}> {
+    console.log('Uploaded file:', videoFile);
+    console.log('Request Body Is:', requestBody);
+    return {status: 200, message: 'File uploaded successfully'};
+
   }
 }
