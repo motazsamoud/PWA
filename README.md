@@ -12,15 +12,19 @@
 
 **Note**: Minio needs cli to change the resources' visibility 
 * mini cli link (output path where every you want)
-  ```
-    curl https://dl.min.io/client/mc/release/windows-amd64/mc.exe --output mc.exe
-  ```
+```
+  curl https://dl.min.io/client/mc/release/windows-amd64/mc.exe --output mc.exe
+```
+**Note**: Start The Server
+```
+  minio server start
+```
 
 **Note**: Need to create directory (bucket) where we are going to store resources (don't forget to change your params)
 ```
-mc alias set myminio http://localhost:9000 minioadmin minioadmin
-mc mb myminio/courses-content
-mc anonymous set download myminio/courses-content
+  mc alias set myminio http://localhost:9000 minioadmin minioadmin
+  mc mb myminio/courses-content
+  mc anonymous set download myminio/courses-content
 ```
 **Note**: No just install minio client for node
 ```
