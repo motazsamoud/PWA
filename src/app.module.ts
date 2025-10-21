@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserModule } from './user/user.module';
 import { UserController } from './user/user.controller';
@@ -8,11 +6,10 @@ import { UserController } from './user/user.controller';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { JwtStrategy } from './user/jwt-auth/jwt.strategy';
-import { CourseModuleModule } from './course-module/course-module.module';
-import { LessonModule } from './lesson/lesson.module';
-import { ResourcesModule } from './resources/resources.module';
 import { StorageModule } from './storage/storage.module';
-import { CategoryModule } from './category/category.module';
+import { CoursModule } from './cours/cours.module';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './user/jwt-auth/jwt-auth.guard';
 
 
 @Module({
@@ -20,16 +17,16 @@ import { CategoryModule } from './category/category.module';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
-    MongooseModule.forRoot('mongodb://admin:admin@127.0.0.1:27017/StageEte2025_2026?authSource=admin'),
+    MongooseModule.forRoot(process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/e-learning"),
     UserModule,
     AuthModule,
-    CourseModuleModule,
-    LessonModule,
-    ResourcesModule,
     StorageModule,
-    CategoryModule,
+    CoursModule,
   ],
-  providers: [AppService,JwtStrategy],
-  controllers: [AppController, UserController,],
+  providers: [{
+    provide:APP_GUARD,
+    useClass:JwtAuthGuard
+  }],
+  controllers: [ UserController],
 })
 export class AppModule {}

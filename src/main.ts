@@ -10,6 +10,7 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 // ⬇️ pour exposer /uploads
 import * as express from 'express';
 import { join } from 'path';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -19,7 +20,8 @@ async function bootstrap() {
   app.use(bodyParser.json({ limit: '10mb' }));
   app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
   app.useWebSocketAdapter(new IoAdapter(app));
-
+  app.useGlobalPipes(new ValidationPipe());
+  
   // CORS (OK pour images /uploads en GET)
   app.enableCors({
     origin: '*',
@@ -33,6 +35,7 @@ async function bootstrap() {
   app.use('/uploads', express.static(uploadsPath));
   console.log('📁 Serving /uploads from:', uploadsPath);
 
+  console.log(process.env.JWT_SECRET)
   // Swagger
   const config = new DocumentBuilder()
       .setTitle('NestJS API Documentation')

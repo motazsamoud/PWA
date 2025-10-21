@@ -21,6 +21,7 @@ import { JwtAuthGuard } from './jwt-auth/jwt-auth.guard';
 import { User } from './entities/user.entity';
 import { Request } from 'express';
 import {Role} from "src/user/entities/Role.enum";
+import { Public } from 'src/common/decorators/public.decorator';
 
 @Controller('user')
 export class UserController {
@@ -33,6 +34,7 @@ export class UserController {
     return this.userService.findAllUsers();
   }
 
+  @Public()
   @Post('signup')
   async create(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);
@@ -45,7 +47,7 @@ export class UserController {
     return user;
   }
 
-
+  @Public()
   @Post('login')
   async login(@Body() loginDto: LoginDto) {
     return this.userService.login(loginDto);
@@ -57,13 +59,13 @@ export class UserController {
   }
 
   // --- OTP / Auth ---
-
+  @Public()
   @Post('send-otp')
   async sendOtp(@Body('email') email: string) {
     await this.userService.sendOtpToUser(email);
     return { message: 'OTP sent successfully' };
   }
-
+  @Public()
   @Post('verify-otp')
   async verifyOtp(
       @Body()
@@ -87,7 +89,7 @@ export class UserController {
     await this.userService.logout(token);
     return { message: 'Logged out successfully' };
   }
-
+  @Public()
   @Post('resend-otp')
   async resendOtp(@Body('email') email: string) {
     await this.userService.resendOtp(email);
@@ -108,7 +110,7 @@ export class UserController {
   }
 
   // --- Password management ---
-
+  @Public()
   @Post('forget-password')
   async forgetPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
     await this.userService.forgetPassword(forgotPasswordDto);
