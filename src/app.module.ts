@@ -11,6 +11,7 @@ import { CoursModule } from './cours/cours.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './user/jwt-auth/jwt-auth.guard';
 import { LessonModule } from './lesson/lesson.module';
+import { ResourcesModule } from './resources/resources.module';
 
 
 @Module({
@@ -24,6 +25,7 @@ import { LessonModule } from './lesson/lesson.module';
     StorageModule,
     CoursModule,
     LessonModule,
+    ResourcesModule,
   ],
   providers: [{
     provide:APP_GUARD,
