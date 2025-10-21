@@ -13,8 +13,14 @@ export class CoursController {
      return this.coursService.create(createCourDto,userId);
   }
 
-  @Get()
-  findAll(@GetCurrentUserId() userId) {
+  @Get('/getAll/student')
+  getAllCoursForStudent() {
+    return this.coursService.getAllCoursForStudent();
+  }
+
+
+  @Get('/getAll/me')
+  getMyCours(@GetCurrentUserId() userId) {
     return this.coursService.findAll(userId);
   }
 

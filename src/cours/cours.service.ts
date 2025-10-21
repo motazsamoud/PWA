@@ -29,6 +29,9 @@ export class CoursService {
   async findAll(userId) {
     return this.coursModel.find({ userId }).exec();
   }
+  async getAllCoursForStudent(){
+    return this.coursModel.find().exec();
+  }
 
   findOne(id) {
     return  this.coursModel.findById(id).exec();

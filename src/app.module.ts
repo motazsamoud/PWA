@@ -10,6 +10,7 @@ import { StorageModule } from './storage/storage.module';
 import { CoursModule } from './cours/cours.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './user/jwt-auth/jwt-auth.guard';
+import { LessonModule } from './lesson/lesson.module';
 
 
 @Module({
@@ -22,6 +23,7 @@ import { JwtAuthGuard } from './user/jwt-auth/jwt-auth.guard';
     AuthModule,
     StorageModule,
     CoursModule,
+    LessonModule,
   ],
   providers: [{
     provide:APP_GUARD,
