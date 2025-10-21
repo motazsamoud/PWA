@@ -1,7 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { Cours, CoursDocument } from 'src/cours/entities/cour.entity';
 
 export type LessonDocument = Lesson & Document;
 
