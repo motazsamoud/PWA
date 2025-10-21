@@ -1,34 +1,35 @@
-
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Client } from 'minio';
+import { MINIO_CLIENT, MINIO_BUCKET } from 'src/storage/storage.module';
 import { StorageServiceInterface } from './interfaces/storage.service.interface';
 
 @Injectable()
 export class MinioStorageService implements StorageServiceInterface {
-  private readonly minioClient: Client;
-  private readonly bucketName = 'courses-content';
+  constructor(
+    @Inject(MINIO_CLIENT) private readonly minioClient: Client,
+  ) {}
 
-  constructor() {
-    this.minioClient = new Client({
-      endPoint: 'localhost', // TODO: Move to config
-      port: 9000, // TODO: Move to config
-      useSSL: false, // TODO: Move to config
-      accessKey: 'minioadmin', 
-      secretKey: 'minioadmin', 
-    });
+  private bucket = MINIO_BUCKET;
+
+  // pathPrefix example: lessons/<lessonId>/resources
+  async upload(file: Express.Multer.File, pathPrefix: string): Promise<string> {
+    const safeName = file.originalname.replace(/[^\w.\-]/g, '_');
+    const objectName = `${pathPrefix}/${Date.now()}-${safeName}`;
+    await this.minioClient.putObject(
+      this.bucket,
+      objectName,
+      file.buffer,
+      file.size,
+      { 'Content-Type': file.mimetype || 'application/octet-stream' },
+    );
+    return objectName;
   }
 
-  async upload(file: Express.Multer.File, path: string): Promise<string> {
-    const fileName = `${path}/${Date.now()}-${file.originalname}`;
-    await this.minioClient.putObject(this.bucketName, fileName, file.buffer, file.size);
-    return fileName;
+  async delete(objectPath: string): Promise<void> {
+    await this.minioClient.removeObject(this.bucket, objectPath);
   }
 
-  async delete(path: string): Promise<void> {
-    await this.minioClient.removeObject(this.bucketName, path);
-  }
-
-  async getSignedUrl(path: string): Promise<string> {
-    return this.minioClient.presignedGetObject(this.bucketName, path, 24 * 60 * 60); // 24 hours
+  async getSignedUrl(objectPath: string, expiresSeconds = 24 * 60 * 60): Promise<string> {
+    return this.minioClient.presignedGetObject(this.bucket, objectPath, expiresSeconds);
   }
 }

@@ -1,34 +1,52 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Body, Controller, Delete, Get, Param, Patch, Post, UploadedFile, UseInterceptors, Query,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ResourcesService } from './resources.service';
 import { CreateResourceDto } from './dto/create-resource.dto';
 import { UpdateResourceDto } from './dto/update-resource.dto';
+import { ResourceKind } from './entities/resource.entity';
 
 @Controller('resources')
 export class ResourcesController {
   constructor(private readonly resourcesService: ResourcesService) {}
 
-  @Post()
-  create(@Body() createResourceDto: CreateResourceDto) {
-    return this.resourcesService.create(createResourceDto);
+  // Upload a file resource
+  @Post('upload')
+  @UseInterceptors(FileInterceptor('file'))
+  async upload(
+    @Body() dto: CreateResourceDto,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    return this.resourcesService.createFile(dto, file);
   }
 
+  // Create a link resource
+  @Post('link')
+  async createLink(@Body() dto: CreateResourceDto) {
+    dto.kind = ResourceKind.LINK;
+    return this.resourcesService.createLink(dto);
+  }
+
+  // List resources by lesson
   @Get()
-  findAll() {
-    return this.resourcesService.findAll();
+  async listByLesson(@Query('lessonId') lessonId: string) {
+    return this.resourcesService.findByLesson(lessonId);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.resourcesService.findOne(+id);
+  // Signed download URL for a resource
+  @Get(':id/signed-url')
+  async signedUrl(@Param('id') id: string) {
+    return this.resourcesService.getSignedDownloadUrl(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateResourceDto: UpdateResourceDto) {
-    return this.resourcesService.update(+id, updateResourceDto);
+  async update(@Param('id') id: string, @Body() dto: UpdateResourceDto) {
+    return this.resourcesService.update(id, dto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.resourcesService.remove(+id);
+  async remove(@Param('id') id: string) {
+    return this.resourcesService.remove(id);
   }
 }
