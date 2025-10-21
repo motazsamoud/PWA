@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
+import { Lesson } from 'src/lesson/entities/lesson.entity';
 import { User } from 'src/user/entities/user.entity';
 
 export type CoursDocument = Cours & Document;
@@ -24,7 +25,8 @@ export class Cours extends Document {
   @Prop({ type: Types.ObjectId, ref: User.name, required: true })
   userId: Types.ObjectId;
 
-
+  @Prop({ type: [{ type: Types.ObjectId, ref: Lesson.name}], default: [] })
+  lessons: Lesson[];
 }
 
 export const CoursSchema = SchemaFactory.createForClass(Cours);

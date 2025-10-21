@@ -21,7 +21,7 @@ import { MulterModule } from '@nestjs/platform-express';
       isGlobal: true,
     }),
     MulterModule.register({ storage: undefined /* memory by default */ }),
-    MongooseModule.forRoot(process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/e-learning"),
+    MongooseModule.forRoot(process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/e-learnings"),
     UserModule,
     AuthModule,
     MinioModule,

@@ -2,13 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { CreateCourDto } from './dto/create-cour.dto';
 import { UpdateCourDto } from './dto/update-cour.dto';
 import { Cours, CoursDocument } from './entities/cour.entity';
-import { InjectModel } from '@nestjs/mongoose/dist';
-import { Model } from 'mongoose';
+import { InjectConnection, InjectModel } from '@nestjs/mongoose/dist';
+import { Connection, Model } from 'mongoose';
 
 @Injectable()
 export class CoursService {
     constructor(
         @InjectModel(Cours.name) private readonly coursModel: Model<CoursDocument>,
+          @InjectConnection() private readonly connection: Connection,
     ) {}
   
 
@@ -27,7 +28,11 @@ export class CoursService {
   }
 
   async findAll(userId) {
-    return this.coursModel.find({ userId }).exec();
+    return this.coursModel.find({ userId }).populate({
+        path: 'lessons',
+        model:'Lesson', 
+        options: { sort: { order: 1 } },  // optional
+      }).exec();
   }
   async getAllCoursForStudent(){
     return this.coursModel.find().exec();
